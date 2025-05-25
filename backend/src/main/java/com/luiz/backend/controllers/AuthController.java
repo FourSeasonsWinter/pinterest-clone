@@ -27,6 +27,7 @@ public class AuthController {
   private AuthenticationManager authenticationManager;
   private JwtUtil jwtUtil;
 
+  // TODO add a refresh token mechanism
   @PostMapping("/login")
   public String login(@RequestBody LoginRequest request) {
     String username = request.getUsername();
