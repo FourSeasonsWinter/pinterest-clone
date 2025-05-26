@@ -12,20 +12,21 @@ import org.springframework.web.bind.annotation.RestController;
 import com.luiz.backend.dtos.LoginRequest;
 import com.luiz.backend.dtos.RegisterRequest;
 import com.luiz.backend.entity.User;
+import com.luiz.backend.exception.InvalidCredentialsException;
 import com.luiz.backend.repository.UserRepository;
 import com.luiz.backend.util.JwtUtil;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@AllArgsConstructor
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
   
-  private UserRepository repository;
-  private PasswordEncoder encoder;
-  private AuthenticationManager authenticationManager;
-  private JwtUtil jwtUtil;
+  private final UserRepository repository;
+  private final PasswordEncoder encoder;
+  private final AuthenticationManager authenticationManager;
+  private final JwtUtil jwtUtil;
 
   // TODO add a refresh token mechanism
   @PostMapping("/login")
@@ -38,7 +39,7 @@ public class AuthController {
       );
       return jwtUtil.generateToken(username);
     } catch (Exception e) {
-      throw new RuntimeException("Invalid credentials");
+      throw new InvalidCredentialsException("Invalid credentials");
     }
   }
 

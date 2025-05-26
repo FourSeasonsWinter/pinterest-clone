@@ -1,11 +1,15 @@
 package com.luiz.backend.entity;
 
-import java.util.ArrayList;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,16 +27,19 @@ public class User {
   private String username;
   private String email;
   private String password;
+  private String bio;
+  private URL profilePictureUrl;
+  private LocalDateTime createdAt;
+
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private Set<Pin> pins = new HashSet<>();
+
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+  private Set<Board> boards = new HashSet<>();
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private List<Pin> pins = new ArrayList<>();
+  private List<Like> likes;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private List<Like> likes = new ArrayList<>();
-
-  @OneToMany(mappedBy = "user")
-  private List<Board> boards;
-
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
   private List<Comment> comments;
 }
