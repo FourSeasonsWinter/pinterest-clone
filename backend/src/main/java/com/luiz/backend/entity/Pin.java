@@ -1,8 +1,7 @@
 package com.luiz.backend.entity;
 
-import java.net.URI;
-import java.net.URL;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 import jakarta.persistence.Entity;
@@ -24,16 +23,18 @@ public class Pin {
   private UUID id;
   private String title;
   private String description;
-  private URL image_url;
-  private URI link;
+  private String tag;
+  private String imageUrl;
+  private String sourceLink;
+  private LocalDateTime createdAt;
 
   @ManyToOne
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
   @OneToMany(mappedBy = "pin")
-  private List<Comment> comments;
+  private Set<Comment> comments;
 
   @OneToMany(mappedBy = "pin")
-  private List<BoardPin> boardPins;
+  private Set<BoardPin> boardPins;
 }

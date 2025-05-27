@@ -1,8 +1,7 @@
 package com.luiz.backend.dtos;
 
-import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.luiz.backend.entity.Board;
@@ -16,8 +15,8 @@ public class UserDto {
   private String username;
   private String email;
   private String bio;
-  private URL profilePictureUrl;
+  private String profilePictureUrl;
   private LocalDateTime createdAt;
-  private List<Pin> pins;
-  private List<Board> boards;
+  private Set<Pin> pins;
+  private Set<Board> boards;
 }

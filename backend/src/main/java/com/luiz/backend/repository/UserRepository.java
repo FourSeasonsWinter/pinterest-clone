@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.luiz.backend.entity.User;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
-  @EntityGraph(attributePaths = {"boards", "pins"})
+  @EntityGraph(attributePaths = {"boards", "pins", "likes", "comments"})
   Optional<User> findByUsername(String username);
 }

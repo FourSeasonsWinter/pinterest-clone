@@ -1,9 +1,7 @@
 package com.luiz.backend.entity;
 
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -28,18 +26,18 @@ public class User {
   private String email;
   private String password;
   private String bio;
-  private URL profilePictureUrl;
+  private String profilePictureUrl;
   private LocalDateTime createdAt;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private Set<Pin> pins = new HashSet<>();
 
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private Set<Board> boards = new HashSet<>();
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private List<Like> likes;
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private Set<Like> likes;
 
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-  private List<Comment> comments;
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private Set<Comment> comments;
 }

@@ -26,6 +26,12 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
   }
 
+  @ExceptionHandler(PinNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handlePinNotFound(PinNotFoundException ex) {
+    ErrorResponse error = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleGeneral(Exception ex) {
     ErrorResponse error = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An unexpected error occurred");
