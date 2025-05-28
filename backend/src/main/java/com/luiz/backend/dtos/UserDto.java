@@ -4,9 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import com.luiz.backend.entity.Board;
-import com.luiz.backend.entity.Pin;
-
 import lombok.Data;
 
 @Data
@@ -17,6 +14,4 @@ public class UserDto {
   private String bio;
   private String profilePictureUrl;
   private LocalDateTime createdAt;
-  private Set<Pin> pins;
-  private Set<Board> boards;
 }

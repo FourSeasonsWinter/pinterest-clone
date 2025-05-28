@@ -6,7 +6,7 @@ import lombok.Value;
 public class PinPostRequest {
   private String title;
   private String description;
-  private String tag;
+  private String tags;
   private String imageUrl;
   private String sourceLink;
 }

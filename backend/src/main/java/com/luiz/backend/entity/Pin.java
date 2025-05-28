@@ -1,16 +1,18 @@
 package com.luiz.backend.entity;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -23,18 +25,25 @@ public class Pin {
   private UUID id;
   private String title;
   private String description;
-  private String tag;
+  private String tags;
   private String imageUrl;
   private String sourceLink;
   private LocalDateTime createdAt;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-  @OneToMany(mappedBy = "pin")
-  private Set<Comment> comments;
+  @ManyToMany(mappedBy = "pins", fetch = FetchType.LAZY)
+  private Set<Board> boards = new HashSet<>();
 
-  @OneToMany(mappedBy = "pin")
-  private Set<BoardPin> boardPins;
+  public void addBoard(Board board) {
+    this.boards.add(board);
+    board.getPins().add(this);
+  }
+  
+  public void removeBoard(Board board) {
+    this.boards.remove(board);
+    board.getPins().remove(this);
+  }
 }

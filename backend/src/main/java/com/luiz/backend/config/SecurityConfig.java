@@ -36,6 +36,7 @@ public class SecurityConfig {
       .authorizeHttpRequests(auth -> auth
         .requestMatchers(HttpMethod.GET, "/users/{username}").permitAll()
         .requestMatchers(HttpMethod.GET, "/pins/**").permitAll()
+        .requestMatchers(HttpMethod.GET, "/boards/**").permitAll()
         .requestMatchers(
           "/auth/**",
           "/register/**",

@@ -50,8 +50,8 @@ public class PinServiceImpl implements PinService {
   }
 
   @Override
-  public Page<PinDto> getPinsByTag(String tag, Pageable pageable) {
-    Page<Pin> pinsPage = repository.findByTag(tag, pageable);
+  public Page<PinDto> getPinsByTag(String tags, Pageable pageable) {
+    Page<Pin> pinsPage = repository.findByTags(tags, pageable);
     return pinsPage.map(mapper::toDto);
   }
 

@@ -7,13 +7,14 @@ import java.util.UUID;
 import lombok.Data;
 
 @Data
-public class PinDto {
+public class BoardDto {
   private UUID id;
-  private String title;
+  private String name;
   private String description;
-  private String tags;
-  private String imageUrl;
-  private String sourceLink;
   private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
+  private boolean isPrivate;
   private UUID userId;
+  private String username;
+  private Set<PinDto> pins;
 }
