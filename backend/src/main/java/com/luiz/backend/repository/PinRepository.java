@@ -10,7 +10,7 @@ import com.luiz.backend.entity.Pin;
 import com.luiz.backend.entity.User;
 
 public interface PinRepository extends JpaRepository<Pin, UUID> {
-  Page<Pin> findByTags(String tags, Pageable pageable);
+  Page<Pin> findByTag(String tag, Pageable pageable);
   Page<Pin> findByUser(User user, Pageable pageable);
   Page<Pin> findByUser_Id(UUID userId, Pageable pageable);
 }

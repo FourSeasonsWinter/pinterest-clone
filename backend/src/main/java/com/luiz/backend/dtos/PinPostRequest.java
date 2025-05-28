@@ -1,8 +1,8 @@
 package com.luiz.backend.dtos;
 
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 public class PinPostRequest {
   private String title;
   private String description;

@@ -13,6 +13,6 @@ public interface PinService {
   PinDto createPin(PinPostRequest request, User user);
   PinDto getPin(UUID id);
   void deletePin(UUID id, User user);
-  Page<PinDto> getPinsByTag(String tags, Pageable pageable);
+  Page<PinDto> getPinsByTag(String tag, Pageable pageable);
   Page<PinDto> getPinsByUser(UUID userId, Pageable pageable);
 }
