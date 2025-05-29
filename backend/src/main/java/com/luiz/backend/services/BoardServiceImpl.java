@@ -16,7 +16,7 @@ import com.luiz.backend.entity.Pin;
 import com.luiz.backend.entity.User;
 import com.luiz.backend.exception.BoardNotFoundException;
 import com.luiz.backend.exception.PinNotFoundException;
-import com.luiz.backend.exception.UnauthenticatedException;
+import com.luiz.backend.exception.UnauthorizedException;
 import com.luiz.backend.exception.UserNotFoundException;
 import com.luiz.backend.mappers.BoardMapper;
 import com.luiz.backend.mappers.PinMapper;
@@ -39,6 +39,10 @@ public class BoardServiceImpl implements BoardService {
   @Override
   @Transactional
   public BoardDto createBoard(BoardPostRequest request, User user) {
+    if (request == null || user == null) {
+      throw new IllegalArgumentException("Request or user cannot be null");
+    }
+
     Board board = mapper.toEntity(request);
     board.setUser(user);
 
@@ -120,7 +124,7 @@ public class BoardServiceImpl implements BoardService {
   private Board getBoardIfAuthenticated(UUID boardId, User user) {
     Board board = repository.findById(boardId).orElseThrow(() -> new BoardNotFoundException("Board not found with id " + boardId));
     if (!board.getUser().getId().equals(user.getId())) {
-      throw new UnauthenticatedException("Current user is not the owner of this board");
+      throw new UnauthorizedException("Current user is not the owner of this board");
     }
     return board;
   }

@@ -1,10 +1,10 @@
 package com.luiz.backend.dtos;
 
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 public class BoardUpdateRequest {
   private String name;
   private String description;
-  private String isPrivate;
+  private boolean isPrivate;
 }
