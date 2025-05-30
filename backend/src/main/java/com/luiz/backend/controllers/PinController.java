@@ -50,7 +50,7 @@ public class PinController {
     @RequestParam(defaultValue = "20") int size
   ) {
     Page<PinDto> pinsPage = service.getPinsByTag(tag, PageRequest.of(page, size));
-    return pageMapper.toDto(pinsPage);
+    return pageMapper.toPinDto(pinsPage);
   }
 
   @GetMapping("/by-user")
@@ -61,7 +61,7 @@ public class PinController {
   ) {
     // Can sort by createdAt or popularity with Sort.by("createdAt").descending() on PageRequest
     Page<PinDto> pinsPage = service.getPinsByUser(id, PageRequest.of(page, size));
-    return pageMapper.toDto(pinsPage);
+    return pageMapper.toPinDto(pinsPage);
   }
 
   @PostMapping

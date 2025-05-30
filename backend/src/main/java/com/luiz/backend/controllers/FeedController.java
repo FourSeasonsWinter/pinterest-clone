@@ -38,7 +38,7 @@ public class FeedController {
   ) {
     User user = getAuthenticatedUser(authentication);
     Page<PinDto> feed = service.getFeed(user.getId(), pageable);
-    return pageMapper.toDto(feed);
+    return pageMapper.toPinDto(feed);
   }
 
   private User getAuthenticatedUser(Authentication authentication) {

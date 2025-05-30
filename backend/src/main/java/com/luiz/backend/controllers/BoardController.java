@@ -3,9 +3,7 @@ package com.luiz.backend.controllers;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,13 +14,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.luiz.backend.dtos.BoardDto;
 import com.luiz.backend.dtos.BoardPostRequest;
 import com.luiz.backend.dtos.BoardUpdateRequest;
+import com.luiz.backend.dtos.PageDto;
 import com.luiz.backend.entity.User;
 import com.luiz.backend.exception.UnauthenticatedException;
+import com.luiz.backend.mappers.PageMapper;
 import com.luiz.backend.repository.UserRepository;
 import com.luiz.backend.services.BoardService;
 
@@ -36,6 +37,7 @@ public class BoardController {
 
   private final BoardService service;
   private final UserRepository userRepository;
+  private final PageMapper pageMapper;
 
   @PostMapping
   @SecurityRequirement(name = "bearerAuth")
@@ -56,12 +58,13 @@ public class BoardController {
   }
 
   @GetMapping("/by-user/{username}")
-  public ResponseEntity<Page<BoardDto>> getBoardsByUsername(
+  public ResponseEntity<PageDto<BoardDto>> getBoardsByUsername(
     @PathVariable String username,
-    @PageableDefault(size = 20, sort = "createdAt", direction = Direction.DESC) Pageable pageable
+    @RequestParam(defaultValue = "0") int page,
+    @RequestParam(defaultValue = "20") int size
   ) {
-    Page<BoardDto> boards = service.getBoardsByUsername(username, pageable);
-    return ResponseEntity.ok(boards);
+    Page<BoardDto> boards = service.getBoardsByUsername(username, PageRequest.of(page, size));
+    return ResponseEntity.ok(pageMapper.toBoardDto(boards));
   }
 
   @PutMapping("/{id}")
