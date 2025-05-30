@@ -89,6 +89,7 @@ public class BoardController {
     return ResponseEntity.noContent().build();
   }
 
+  // TODO User BoardAddPinRequest
   @PostMapping("/add-pin/{boardId}")
   @SecurityRequirement(name = "bearerAuth")
   public ResponseEntity<BoardDto> addPin(

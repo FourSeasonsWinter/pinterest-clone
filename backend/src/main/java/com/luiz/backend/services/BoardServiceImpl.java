@@ -13,6 +13,7 @@ import com.luiz.backend.dtos.BoardUpdateRequest;
 import com.luiz.backend.dtos.PinDto;
 import com.luiz.backend.entity.Board;
 import com.luiz.backend.entity.Pin;
+import com.luiz.backend.entity.PinBoard;
 import com.luiz.backend.entity.User;
 import com.luiz.backend.exception.BoardNotFoundException;
 import com.luiz.backend.exception.PinNotFoundException;
@@ -21,6 +22,7 @@ import com.luiz.backend.exception.UserNotFoundException;
 import com.luiz.backend.mappers.BoardMapper;
 import com.luiz.backend.mappers.PinMapper;
 import com.luiz.backend.repository.BoardRepository;
+import com.luiz.backend.repository.PinBoardRepository;
 import com.luiz.backend.repository.PinRepository;
 import com.luiz.backend.repository.UserRepository;
 
@@ -35,6 +37,7 @@ public class BoardServiceImpl implements BoardService {
   private final UserRepository userRepository;
   private final PinMapper pinMapper;
   private final PinRepository pinRepository;
+  private final PinBoardRepository pinBoardRepository;
 
   @Override
   @Transactional
@@ -75,12 +78,14 @@ public class BoardServiceImpl implements BoardService {
     Board board = getBoardIfAuthenticated(boardId, user);
     Pin pin = pinRepository.findById(pinId).orElseThrow(() -> new PinNotFoundException("Pin not found with id " + pinId));
 
-    pin.setUser(user);
-    board.addPin(pin);
+    PinBoard pinBoard = new PinBoard();
+    pinBoard.setBoard(board);
+    pinBoard.setPin(pin);
 
-    BoardDto savedBoard = mapper.toDto(repository.save(board));
+    board.getPinBoards().add(pinBoard);
+    repository.save(board);
 
-    return savedBoard;
+    return mapper.toDto(board);
   }
 
   @Override
@@ -88,11 +93,12 @@ public class BoardServiceImpl implements BoardService {
   public BoardDto removePin(UUID boardId, UUID pinId, User user) {
     Board board = getBoardIfAuthenticated(boardId, user);
     Pin pin = pinRepository.findById(pinId).orElseThrow(() -> new PinNotFoundException("Pin not found with id " + pinId));
+    PinBoard pinBoard = pinBoardRepository.findByBoardAndPin(board, pin).orElseThrow(() -> new PinNotFoundException("Pin not found"));
 
-    board.removePin(pin);
-    Board savedBoard = repository.save(board);
+    board.getPinBoards().remove(pinBoard);
+    repository.save(board);
 
-    return mapper.toDto(savedBoard);
+    return mapper.toDto(board);
   }
 
   @Override
