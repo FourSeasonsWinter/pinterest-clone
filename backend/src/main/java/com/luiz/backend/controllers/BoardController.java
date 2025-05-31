@@ -1,5 +1,6 @@
 package com.luiz.backend.controllers;
 
+import java.net.URI;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.luiz.backend.dtos.BoardDto;
 import com.luiz.backend.dtos.BoardPostRequest;
@@ -58,12 +60,14 @@ public class BoardController {
   @SecurityRequirement(name = "bearerAuth")
   public ResponseEntity<BoardDto> createBoard(
     @RequestBody BoardPostRequest request,
-    Authentication authentication
+    Authentication authentication,
+    UriComponentsBuilder uriBuilder
   ) {
     User user = getUserUtil.getAuthenticatedUser();
     BoardDto dto = service.createBoard(request, user);
+    URI uri = uriBuilder.path("/boards/{id}").buildAndExpand(dto.getId()).toUri();
 
-    return ResponseEntity.ok(dto);
+    return ResponseEntity.created(uri).body(dto);
   }
 
   @PutMapping("/{id}")

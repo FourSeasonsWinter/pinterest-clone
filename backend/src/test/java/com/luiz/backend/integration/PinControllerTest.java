@@ -99,9 +99,10 @@ public class PinControllerTest {
     mockMvc.perform(post("/pins")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(pin))
-        .with(user(testUser.getUsername())))
+        .with(user("Test User")))
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.title").value("New Pin"));
+        .andExpect(jsonPath("$.title").value("New Pin"))
+        .andExpect(jsonPath("$.userId").value(testUser.getId().toString()));
   }
 
   @Test
