@@ -26,7 +26,6 @@ public class Pin {
   private UUID id;
   private String title;
   private String description;
-  private String tag;
   private String imageUrl;
   private String sourceLink;
   private LocalDateTime createdAt;

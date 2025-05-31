@@ -5,6 +5,7 @@ import java.util.UUID;
 import lombok.Data;
 
 @Data
-public class BoardAddPinRequest {
+public class PinBoardRequest {
   private UUID pinId;
+  private UUID boardId;
 }

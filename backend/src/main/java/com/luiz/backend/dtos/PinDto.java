@@ -10,7 +10,6 @@ public class PinDto {
   private UUID id;
   private String title;
   private String description;
-  private String tags;
   private String imageUrl;
   private String sourceLink;
   private LocalDateTime createdAt;

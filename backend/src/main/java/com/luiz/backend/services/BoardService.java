@@ -16,9 +16,6 @@ public interface BoardService {
   BoardDto updateBoard(UUID boardId, BoardUpdateRequest request, User user);
   void deleteBoard(UUID boardId, User user);
 
-  BoardDto addPin(UUID boardId, UUID pinId, User user);
-  BoardDto removePin(UUID boardId, UUID pinId, User user);
-
   BoardDto getBoard(UUID boardId);
   Page<PinDto> getPinsOnBoard(UUID boardId, Pageable pageable);
   Page<BoardDto> getBoardsFromUser(UUID userId, Pageable pageable);

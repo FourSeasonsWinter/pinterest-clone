@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.luiz.backend.dtos.PageDto;
 import com.luiz.backend.dtos.PinDto;
 import com.luiz.backend.dtos.PinPostRequest;
+import com.luiz.backend.dtos.PinUpdateRequest;
 import com.luiz.backend.entity.User;
 import com.luiz.backend.exception.UnauthenticatedException;
 import com.luiz.backend.mappers.PageMapper;
@@ -43,24 +45,14 @@ public class PinController {
     return ResponseEntity.ok(pin);
   }
 
-  @GetMapping("/by-tag")
-  public PageDto<PinDto> getPinsByTag(
-    @RequestParam String tag,
-    @RequestParam(defaultValue = "0") int page,
-    @RequestParam(defaultValue = "20") int size
-  ) {
-    Page<PinDto> pinsPage = service.getPinsByTag(tag, PageRequest.of(page, size));
-    return pageMapper.toPinDto(pinsPage);
-  }
-
   @GetMapping("/by-user")
   public PageDto<PinDto> getPinsByUser(
-    @RequestParam UUID id,
+    @RequestParam String username,
     @RequestParam(defaultValue = "0") int page,
     @RequestParam(defaultValue = "20") int size
   ) {
-    // Can sort by createdAt or popularity with Sort.by("createdAt").descending() on PageRequest
-    Page<PinDto> pinsPage = service.getPinsByUser(id, PageRequest.of(page, size));
+    User user = getUser(username);
+    Page<PinDto> pinsPage = service.getPinsByUser(user, PageRequest.of(page, size));
     return pageMapper.toPinDto(pinsPage);
   }
 
@@ -72,6 +64,19 @@ public class PinController {
   ) {
     User user = getAuthenticatedUser(authentication);
     return ResponseEntity.ok(service.createPin(request, user));
+  }
+
+  @PutMapping("/{id}")
+  @SecurityRequirement(name = "bearerAuth")
+  public ResponseEntity<PinDto> updatePin(
+    @PathVariable UUID id,
+    @RequestBody PinUpdateRequest request,
+    Authentication authentication
+  ) {
+    User user = getAuthenticatedUser(authentication);
+    PinDto dto = service.updatePin(id, request, user);
+
+    return ResponseEntity.ok(dto);
   }
 
   @DeleteMapping("/{id}")
@@ -92,6 +97,10 @@ public class PinController {
     }
 
     String username = authentication.getName();
+    return getUser(username);
+  }
+
+  private User getUser(String username) {
     return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found with username " + username));
   }
 }

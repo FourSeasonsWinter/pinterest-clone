@@ -92,20 +92,6 @@ public class BoardController {
     return ResponseEntity.noContent().build();
   }
 
-  // TODO User BoardAddPinRequest
-  @PostMapping("/add-pin/{boardId}")
-  @SecurityRequirement(name = "bearerAuth")
-  public ResponseEntity<BoardDto> addPin(
-    @PathVariable UUID boardId,
-    @RequestBody UUID pinId,
-    Authentication authentication
-  ) {
-    User user = getAuthenticatedUser(authentication);
-    BoardDto dto = service.addPin(boardId, pinId, user);
-
-    return ResponseEntity.ok(dto);
-  }
-
   private User getAuthenticatedUser(Authentication authentication) {
     if (authentication == null) {
       throw new UnauthenticatedException("There is no logged in user");

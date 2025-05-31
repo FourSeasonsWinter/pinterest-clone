@@ -3,9 +3,7 @@ package com.luiz.backend.dtos;
 import lombok.Data;
 
 @Data
-public class PinPostRequest {
+public class PinUpdateRequest {
   private String title;
   private String description;
-  private String imageUrl;
-  private String sourceLink;
 }

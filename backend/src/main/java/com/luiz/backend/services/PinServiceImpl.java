@@ -8,14 +8,13 @@ import org.springframework.stereotype.Service;
 
 import com.luiz.backend.dtos.PinDto;
 import com.luiz.backend.dtos.PinPostRequest;
+import com.luiz.backend.dtos.PinUpdateRequest;
 import com.luiz.backend.entity.Pin;
 import com.luiz.backend.entity.User;
 import com.luiz.backend.exception.PinNotFoundException;
 import com.luiz.backend.exception.UnauthorizedException;
-import com.luiz.backend.exception.UserNotFoundException;
 import com.luiz.backend.mappers.PinMapper;
 import com.luiz.backend.repository.PinRepository;
-import com.luiz.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 public class PinServiceImpl implements PinService {
 
   private final PinRepository repository;
-  private final UserRepository userRepository;
   private final PinMapper mapper;
 
   @Override
@@ -43,8 +41,13 @@ public class PinServiceImpl implements PinService {
   }
 
   @Override
-  public PinDto getPin(UUID id) {
+  public PinDto updatePin(UUID id, PinUpdateRequest request, User user) {
     Pin pin = repository.findById(id).orElseThrow(() -> new PinNotFoundException("Pin not found with id " + id));
+
+    pin.setTitle(request.getTitle());
+    pin.setDescription(request.getDescription());
+    repository.save(pin);
+
     return mapper.toDto(pin);
   }
 
@@ -62,15 +65,13 @@ public class PinServiceImpl implements PinService {
   }
 
   @Override
-  public Page<PinDto> getPinsByTag(String tag, Pageable pageable) {
-    Page<Pin> pinsPage = repository.findByTag(tag, pageable);
-    return pinsPage.map(mapper::toDto);
+  public PinDto getPin(UUID id) {
+    Pin pin = repository.findById(id).orElseThrow(() -> new PinNotFoundException("Pin not found with id " + id));
+    return mapper.toDto(pin);
   }
 
   @Override
-  public Page<PinDto> getPinsByUser(UUID userId, Pageable pageable) {
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
+  public Page<PinDto> getPinsByUser(User user, Pageable pageable) {
     Page<Pin> pinsPage = repository.findByUser(user, pageable);
     return pinsPage.map(mapper::toDto);
   }
