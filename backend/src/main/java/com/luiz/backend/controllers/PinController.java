@@ -1,5 +1,6 @@
 package com.luiz.backend.controllers;
 
+import java.net.URI;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.luiz.backend.dtos.PageDto;
 import com.luiz.backend.dtos.PinDto;
@@ -58,10 +60,14 @@ public class PinController {
   @SecurityRequirement(name = "bearerAuth")
   public ResponseEntity<PinDto> createPin(
     @RequestBody PinPostRequest request,
-    Authentication authentication
+    Authentication authentication,
+    UriComponentsBuilder uriBuilder
   ) {
     User user = getUserUtil.getAuthenticatedUser();
-    return ResponseEntity.ok(service.createPin(request, user));
+    PinDto pin = service.createPin(request, user);
+    URI uri = uriBuilder.path("/pins/{id}").buildAndExpand(pin.getId()).toUri();
+
+    return ResponseEntity.created(uri).body(pin);
   }
 
   @PutMapping("/{id}")
