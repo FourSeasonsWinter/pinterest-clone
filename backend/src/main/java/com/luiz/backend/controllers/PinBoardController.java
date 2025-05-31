@@ -18,6 +18,7 @@ import com.luiz.backend.dtos.BoardDto;
 import com.luiz.backend.dtos.PageDto;
 import com.luiz.backend.dtos.PinBoardPostRequest;
 import com.luiz.backend.dtos.PinDto;
+import com.luiz.backend.entity.PinBoard;
 import com.luiz.backend.entity.User;
 import com.luiz.backend.services.PinBoardService;
 import com.luiz.backend.util.GetUserUtil;
@@ -34,7 +35,7 @@ public class PinBoardController {
   private final PinBoardService service;
   private final GetUserUtil getUserUtil;
   
-  @Operation(summary = "Get all pins in a board")
+  @Operation(summary = "Get all pins on a board")
   @GetMapping("/boards/{boardId}")
   public ResponseEntity<PageDto<PinDto>> getPinsFromBoard(
     @PathVariable UUID boardId,
@@ -60,20 +61,20 @@ public class PinBoardController {
   @Operation(summary = "Add a pin to a board")
   @SecurityRequirement(name = "bearerAuth")
   @PostMapping
-  public ResponseEntity<Void> addPinToBoard(
+  public ResponseEntity<PinBoard> addPinToBoard(
     @RequestBody PinBoardPostRequest request,
     Authentication authentication
   ) {
     User user = getUserUtil.getAuthenticatedUser();
-    service.addPinToBoard(request.getPinId(), request.getBoardId(), user);
+    PinBoard pinBoard = service.addPinToBoard(request.getPinId(), request.getBoardId(), user);
 
-    return ResponseEntity.ok().build();
+    return ResponseEntity.ok(pinBoard);
   }
 
   @Operation(summary = "Remove a pin from a board")
   @SecurityRequirement(name = "bearerAuth")
   @DeleteMapping("/pinBoardId")
-  public ResponseEntity<Void> deletePinFromBoard(
+  public ResponseEntity<Void> removePinFromBoard(
     @PathVariable UUID pinBoardId,
     Authentication authentication
   ) {
