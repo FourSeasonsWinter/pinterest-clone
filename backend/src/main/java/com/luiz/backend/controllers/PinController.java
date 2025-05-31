@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,10 +21,9 @@ import com.luiz.backend.dtos.PinDto;
 import com.luiz.backend.dtos.PinPostRequest;
 import com.luiz.backend.dtos.PinUpdateRequest;
 import com.luiz.backend.entity.User;
-import com.luiz.backend.exception.UnauthenticatedException;
 import com.luiz.backend.mappers.PageMapper;
-import com.luiz.backend.repository.UserRepository;
 import com.luiz.backend.services.PinService;
+import com.luiz.backend.util.GetUserUtil;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +34,8 @@ import lombok.RequiredArgsConstructor;
 public class PinController {
   
   private final PinService service;
-  private final UserRepository userRepository;
   private final PageMapper pageMapper;
+  private final GetUserUtil getUserUtil;
 
   @GetMapping("/{id}")
   public ResponseEntity<PinDto> getPin(@PathVariable UUID id) {
@@ -46,14 +44,14 @@ public class PinController {
   }
 
   @GetMapping("/by-user")
-  public PageDto<PinDto> getPinsByUser(
+  public ResponseEntity<PageDto<PinDto>> getPinsByUser(
     @RequestParam String username,
     @RequestParam(defaultValue = "0") int page,
     @RequestParam(defaultValue = "20") int size
   ) {
-    User user = getUser(username);
+    User user = getUserUtil.getUser(username);
     Page<PinDto> pinsPage = service.getPinsByUser(user, PageRequest.of(page, size));
-    return pageMapper.toPinDto(pinsPage);
+    return ResponseEntity.ok(pageMapper.toPinDto(pinsPage));
   }
 
   @PostMapping
@@ -62,7 +60,7 @@ public class PinController {
     @RequestBody PinPostRequest request,
     Authentication authentication
   ) {
-    User user = getAuthenticatedUser(authentication);
+    User user = getUserUtil.getAuthenticatedUser();
     return ResponseEntity.ok(service.createPin(request, user));
   }
 
@@ -73,7 +71,7 @@ public class PinController {
     @RequestBody PinUpdateRequest request,
     Authentication authentication
   ) {
-    User user = getAuthenticatedUser(authentication);
+    User user = getUserUtil.getAuthenticatedUser();
     PinDto dto = service.updatePin(id, request, user);
 
     return ResponseEntity.ok(dto);
@@ -85,22 +83,9 @@ public class PinController {
     @PathVariable UUID id,
     Authentication authentication
   ) {
-    User user = getAuthenticatedUser(authentication);
+    User user = getUserUtil.getAuthenticatedUser();
     service.deletePin(id, user);
 
     return ResponseEntity.noContent().build();
-  }
-
-  private User getAuthenticatedUser(Authentication authentication) {
-    if (authentication == null) {
-      throw new UnauthenticatedException("There is no logged in user");
-    }
-
-    String username = authentication.getName();
-    return getUser(username);
-  }
-
-  private User getUser(String username) {
-    return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found with username " + username));
   }
 }

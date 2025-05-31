@@ -10,6 +10,5 @@ import com.luiz.backend.entity.User;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
   UserDto toDto(User user);
-  
   void update(UserUpdateRequest request, @MappingTarget User user);
 }

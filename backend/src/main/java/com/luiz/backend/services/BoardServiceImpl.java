@@ -10,17 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.luiz.backend.dtos.BoardDto;
 import com.luiz.backend.dtos.BoardPostRequest;
 import com.luiz.backend.dtos.BoardUpdateRequest;
-import com.luiz.backend.dtos.PinDto;
 import com.luiz.backend.entity.Board;
-import com.luiz.backend.entity.Pin;
 import com.luiz.backend.entity.User;
 import com.luiz.backend.exception.BoardNotFoundException;
 import com.luiz.backend.exception.UnauthorizedException;
-import com.luiz.backend.exception.UserNotFoundException;
 import com.luiz.backend.mappers.BoardMapper;
-import com.luiz.backend.mappers.PinMapper;
 import com.luiz.backend.repository.BoardRepository;
-import com.luiz.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,8 +25,6 @@ public class BoardServiceImpl implements BoardService {
 
   private final BoardRepository repository;
   private final BoardMapper mapper;
-  private final UserRepository userRepository;
-  private final PinMapper pinMapper;
 
   @Override
   @Transactional
@@ -73,22 +66,8 @@ public class BoardServiceImpl implements BoardService {
   }
 
   @Override
-  public Page<PinDto> getPinsOnBoard(UUID boardId, Pageable pageable) {
-    Page<Pin> pinPage = repository.findPinsByBoardId(boardId, pageable);
-    return pinPage.map(pinMapper::toDto);
-  }
-
-  @Override
-  public Page<BoardDto> getBoardsFromUser(UUID userId, Pageable pageable) {
-    User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found with id " + userId));
+  public Page<BoardDto> getBoardsByUser(User user, Pageable pageable) {
     Page<Board> boardsPage = repository.findByUser(user, pageable);
-
-    return boardsPage.map(mapper::toDto);
-  }
-
-  @Override
-  public Page<BoardDto> getAllBoards(Pageable pageable) {
-    Page<Board> boardsPage = repository.findAll(pageable);
     return boardsPage.map(mapper::toDto);
   }
 
@@ -98,11 +77,5 @@ public class BoardServiceImpl implements BoardService {
       throw new UnauthorizedException("Current user is not the owner of this board");
     }
     return board;
-  }
-
-  @Override
-  public Page<BoardDto> getBoardsByUsername(String username, Pageable pageable) {
-    Page<Board> boardPage = repository.findByUser_Username(username, pageable);
-    return boardPage.map(mapper::toDto);
   }
 }

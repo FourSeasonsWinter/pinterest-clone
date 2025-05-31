@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,10 +21,9 @@ import com.luiz.backend.dtos.BoardPostRequest;
 import com.luiz.backend.dtos.BoardUpdateRequest;
 import com.luiz.backend.dtos.PageDto;
 import com.luiz.backend.entity.User;
-import com.luiz.backend.exception.UnauthenticatedException;
 import com.luiz.backend.mappers.PageMapper;
-import com.luiz.backend.repository.UserRepository;
 import com.luiz.backend.services.BoardService;
+import com.luiz.backend.util.GetUserUtil;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -36,20 +34,8 @@ import lombok.RequiredArgsConstructor;
 public class BoardController {
 
   private final BoardService service;
-  private final UserRepository userRepository;
   private final PageMapper pageMapper;
-
-  @PostMapping
-  @SecurityRequirement(name = "bearerAuth")
-  public ResponseEntity<BoardDto> createBoard(
-    @RequestBody BoardPostRequest request,
-    Authentication authentication
-  ) {
-    User user = getAuthenticatedUser(authentication);
-    BoardDto dto = service.createBoard(request, user);
-
-    return ResponseEntity.ok(dto);
-  }
+  private final GetUserUtil getUserUtil;
 
   @GetMapping("/{id}")
   public ResponseEntity<BoardDto> getBoard(@PathVariable UUID id) {
@@ -57,14 +43,27 @@ public class BoardController {
     return ResponseEntity.ok(dto);
   }
 
-  @GetMapping("/by-user/{username}")
+  @GetMapping("/by-user")
   public ResponseEntity<PageDto<BoardDto>> getBoardsByUsername(
-    @PathVariable String username,
+    @RequestParam String username,
     @RequestParam(defaultValue = "0") int page,
     @RequestParam(defaultValue = "20") int size
   ) {
-    Page<BoardDto> boards = service.getBoardsByUsername(username, PageRequest.of(page, size));
+    User user = getUserUtil.getUser(username);
+    Page<BoardDto> boards = service.getBoardsByUser(user, PageRequest.of(page, size));
     return ResponseEntity.ok(pageMapper.toBoardDto(boards));
+  }
+
+  @PostMapping
+  @SecurityRequirement(name = "bearerAuth")
+  public ResponseEntity<BoardDto> createBoard(
+    @RequestBody BoardPostRequest request,
+    Authentication authentication
+  ) {
+    User user = getUserUtil.getAuthenticatedUser();
+    BoardDto dto = service.createBoard(request, user);
+
+    return ResponseEntity.ok(dto);
   }
 
   @PutMapping("/{id}")
@@ -74,7 +73,7 @@ public class BoardController {
     @RequestBody BoardUpdateRequest request,
     Authentication authentication
   ) {
-    User user = getAuthenticatedUser(authentication);
+    User user = getUserUtil.getAuthenticatedUser();
     BoardDto dto = service.updateBoard(id, request, user);
 
     return ResponseEntity.ok(dto);
@@ -86,20 +85,9 @@ public class BoardController {
     @PathVariable UUID id,
     Authentication authentication
   ) {
-    User user = getAuthenticatedUser(authentication);
+    User user = getUserUtil.getAuthenticatedUser();
     service.deleteBoard(id, user);
 
     return ResponseEntity.noContent().build();
-  }
-
-  private User getAuthenticatedUser(Authentication authentication) {
-    if (authentication == null) {
-      throw new UnauthenticatedException("There is no logged in user");
-    }
-
-    String username = authentication.getName();
-    User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found with username " + username));
-
-    return user;
   }
 }
