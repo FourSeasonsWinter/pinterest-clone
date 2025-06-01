@@ -2,6 +2,7 @@ package com.luiz.backend.controllers;
 
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -16,10 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.luiz.backend.dtos.BoardDto;
 import com.luiz.backend.dtos.PageDto;
+import com.luiz.backend.dtos.PinBoardDto;
 import com.luiz.backend.dtos.PinBoardPostRequest;
 import com.luiz.backend.dtos.PinDto;
 import com.luiz.backend.entity.PinBoard;
 import com.luiz.backend.entity.User;
+import com.luiz.backend.mappers.PageMapper;
+import com.luiz.backend.mappers.PinBoardMapper;
 import com.luiz.backend.services.PinBoardService;
 import com.luiz.backend.util.GetUserUtil;
 
@@ -33,7 +37,9 @@ import lombok.RequiredArgsConstructor;
 public class PinBoardController {
 
   private final PinBoardService service;
+  private final PinBoardMapper mapper;
   private final GetUserUtil getUserUtil;
+  private final PageMapper pageMapper;
   
   @Operation(summary = "Get all pins on a board")
   @GetMapping("/boards/{boardId}")
@@ -42,8 +48,8 @@ public class PinBoardController {
     @RequestParam(defaultValue = "0") int page,
     @RequestParam(defaultValue = "20") int size
   ) {
-    PageDto<PinDto> pins = service.getPinsFromBoard(boardId, PageRequest.of(page, size));
-    return ResponseEntity.ok(pins);
+    Page<PinDto> pins = service.getPinsFromBoard(boardId, PageRequest.of(page, size));
+    return ResponseEntity.ok(pageMapper.toPinDto(pins));
   }
 
   @Operation(summary = "Get all boards that contains a pin")
@@ -53,33 +59,33 @@ public class PinBoardController {
     @RequestParam(defaultValue = "0") int page,
     @RequestParam(defaultValue = "20") int size
   ) {
-    PageDto<BoardDto> boards = service.getBoardsFromPin(pinId, PageRequest.of(page, size));
-    return ResponseEntity.ok(boards);
+    Page<BoardDto> boards = service.getBoardsFromPin(pinId, PageRequest.of(page, size));
+    return ResponseEntity.ok(pageMapper.toBoardDto(boards));
   }
-
 
   @Operation(summary = "Add a pin to a board")
   @SecurityRequirement(name = "bearerAuth")
   @PostMapping
-  public ResponseEntity<PinBoard> addPinToBoard(
+  public ResponseEntity<PinBoardDto> addPinToBoard(
     @RequestBody PinBoardPostRequest request,
     Authentication authentication
   ) {
     User user = getUserUtil.getAuthenticatedUser();
     PinBoard pinBoard = service.addPinToBoard(request.getPinId(), request.getBoardId(), user);
 
-    return ResponseEntity.ok(pinBoard);
+    return ResponseEntity.ok(mapper.toDto(pinBoard));
   }
 
   @Operation(summary = "Remove a pin from a board")
   @SecurityRequirement(name = "bearerAuth")
-  @DeleteMapping("/pinBoardId")
+  @DeleteMapping
   public ResponseEntity<Void> removePinFromBoard(
-    @PathVariable UUID pinBoardId,
+    @RequestParam UUID boardId,
+    @RequestParam UUID pinId,
     Authentication authentication
   ) {
     User user = getUserUtil.getAuthenticatedUser();
-    service.removePinFromBoard(pinBoardId, user);
+    service.removePinFromBoard(pinId, boardId, user);
 
     return ResponseEntity.noContent().build();
   }

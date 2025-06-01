@@ -41,7 +41,7 @@ public class PinBoardControllerTest {
   private ObjectMapper objectMapper;
 
   @Autowired
-  private PinBoardRepository repository;
+  private PinBoardRepository pinBoardRepository;
 
   @Autowired
   private UserRepository userRepository;
@@ -52,43 +52,39 @@ public class PinBoardControllerTest {
   @Autowired
   private BoardRepository boardRepository;
 
-  private User user;
+  private User testUser;
   private Pin pin;
   private Board board;
-  private PinBoard testPinBoard;
 
   @BeforeEach
   void setUp() {
-    user = new User();
-    user.setUsername("Test User");
-    userRepository.save(user);
+    testUser = new User();
+    testUser.setUsername("Test User");
+    userRepository.save(testUser);
 
     pin = new Pin();
     pin.setTitle("Test Pin");
-    pin.setUser(user);
+    pin.setUser(testUser);
     pinRepository.save(pin);
 
     board = new Board();
     board.setName("Test Board");
-    board.setUser(user);
+    board.setUser(testUser);
     boardRepository.save(board);
-
-    testPinBoard = new PinBoard();
-    testPinBoard.setPin(pin);
-    testPinBoard.setBoard(board);
-    repository.save(testPinBoard);
   }
 
   @Test
   void shouldGetPinsFromBoard() throws Exception {
-    for (int i = 1; i < 15; i++) {
+    for (int i = 1; i <= 15; i++) {
       Pin newPin = new Pin();
-      newPin.setUser(user);
+      newPin.setTitle("Test Pin " + i);
+      newPin.setUser(testUser);
+      pinRepository.save(newPin);
 
       PinBoard pinBoard = new PinBoard();
       pinBoard.setPin(newPin);
       pinBoard.setBoard(board);
-      repository.save(pinBoard);
+      pinBoardRepository.save(pinBoard);
     }
 
     mockMvc.perform(get("/pin-board/boards/" + board.getId())
@@ -97,22 +93,25 @@ public class PinBoardControllerTest {
       .andExpect(status().isOk())
       .andExpect(jsonPath("$.content").isArray())
       .andExpect(jsonPath("$.content.length()").value(10))
-      .andExpect(jsonPath("$.content[0].pin.title").value("Test Pin"))
+      .andExpect(jsonPath("$.content[0].title").value("Test Pin 1"))
       .andExpect(jsonPath("$.number").value(0))
       .andExpect(jsonPath("$.size").value(10))
       .andExpect(jsonPath("$.totalPages").value(2))
-      .andExpect(jsonPath("$.totalElements").value(16));
+      .andExpect(jsonPath("$.totalElements").value(15));
   }
 
   @Test
   void shouldGetBoardsThatHasPin() throws Exception {
     for (int i = 1; i <= 15; i++) {
       Board newBoard = new Board();
-      PinBoard pinBoard = new PinBoard();
+      newBoard.setName("Test Board " + i);
+      newBoard.setUser(testUser);
+      boardRepository.save(newBoard);
 
+      PinBoard pinBoard = new PinBoard();
       pinBoard.setBoard(newBoard);
       pinBoard.setPin(pin);
-      repository.save(pinBoard);
+      pinBoardRepository.save(pinBoard);
     }
 
     mockMvc.perform(get("/pin-board/pins/" + pin.getId())
@@ -120,11 +119,11 @@ public class PinBoardControllerTest {
       .param("size", "10"))
       .andExpect(jsonPath("$.content").isArray())
       .andExpect(jsonPath("$.content.length()").value(10))
-      .andExpect(jsonPath("$.content[0].board.name").value("Test Board"))
+      .andExpect(jsonPath("$.content[0].name").value("Test Board 1"))
       .andExpect(jsonPath("$.number").value(0))
       .andExpect(jsonPath("$.size").value(10))
       .andExpect(jsonPath("$.totalPages").value(2))
-      .andExpect(jsonPath("$.totalElements").value(16));
+      .andExpect(jsonPath("$.totalElements").value(15));
   }
 
   @Test
@@ -134,24 +133,34 @@ public class PinBoardControllerTest {
     request.setPinId(pin.getId());
     request.setBoardId(board.getId());
 
+    assertTrue(pinBoardRepository.findAll().isEmpty());
+
     mockMvc.perform(post("/pin-board")
       .contentType(MediaType.APPLICATION_JSON)
       .content(objectMapper.writeValueAsString(request))
       .with(user("Test User")))
-      .andExpect(status().isCreated())
-      .andExpect(jsonPath("$.pinId").value(pin.getId()))
-      .andExpect(jsonPath("$.boardId").value(board.getId()));
+      .andExpect(status().isOk())
+      .andExpect(jsonPath("$.pinId").value(pin.getId().toString()))
+      .andExpect(jsonPath("$.boardId").value(board.getId().toString()));
     
-    assertTrue(repository.findByBoardIdAndPinId(pin.getId(), board.getId()).isPresent());
+    assertTrue(pinBoardRepository.findAll().size() == 1);
+    assertTrue(pinBoardRepository.findAll().get(0).getPin().getTitle() == "Test Pin");
   }
 
   @Test
   @WithMockUser(username = "Test User")
   void shouldRemovePinFromBoard() throws Exception {
-    mockMvc.perform(delete("/pin-board/" + testPinBoard.getId())
+    PinBoard testPinBoard = new PinBoard();
+    testPinBoard.setPin(pin);
+    testPinBoard.setBoard(board);
+    pinBoardRepository.save(testPinBoard);
+
+    mockMvc.perform(delete("/pin-board")
+      .param("boardId", board.getId().toString())
+      .param("pinId", pin.getId().toString())
       .with(user("Test User")))
       .andExpect(status().isNoContent());
     
-    assertTrue(repository.findById(testPinBoard.getId()).isEmpty());
+    assertTrue(pinBoardRepository.findById(testPinBoard.getId()).isEmpty());
   }
 }
