@@ -117,6 +117,7 @@ public class PinBoardControllerTest {
     mockMvc.perform(get("/pin-board/pins/" + pin.getId())
       .param("page", "0")
       .param("size", "10"))
+      .andExpect(status().isOk())
       .andExpect(jsonPath("$.content").isArray())
       .andExpect(jsonPath("$.content.length()").value(10))
       .andExpect(jsonPath("$.content[0].name").value("Test Board 1"))

@@ -3,6 +3,7 @@ package com.luiz.backend.controllers;
 import java.util.UUID;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -59,17 +60,17 @@ public class LikeController {
     Authentication authentication
   ) {
     service.likePin(pinId, getUserUtil.getAuthenticatedUser());
-    return ResponseEntity.noContent().build();
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @Operation(summary = "Remove like from a pin")
   @SecurityRequirement(name = "bearerAuth")
   @DeleteMapping("/{pinId}")
-  public ResponseEntity<Void> dislikePin(
+  public ResponseEntity<Void> unlikePin(
     @PathVariable UUID pinId,
     Authentication authentication
   ) {
-    service.dislikePin(pinId, getUserUtil.getAuthenticatedUser());
+    service.unlikePin(pinId, getUserUtil.getAuthenticatedUser());
     return ResponseEntity.noContent().build();
   }
 }

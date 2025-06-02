@@ -11,7 +11,7 @@ import com.luiz.backend.entity.User;
 
 public interface LikeService {
   void likePin(UUID pinId, User user);
-  void dislikePin(UUID pinId, User user);
+  void unlikePin(UUID pinId, User user);
   PageDto<UserDto> getUsersWhoLikedThePin(UUID pinId, Pageable pageable);
   PageDto<PinDto> getPinsLikedByTheUser(UUID userId, Pageable pageable);
 }
