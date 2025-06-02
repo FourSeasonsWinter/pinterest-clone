@@ -11,7 +11,7 @@ import com.luiz.backend.entity.User;
 
 public interface FollowService {
   PageDto<UserDto> getFollowersOfUser(UUID userId, Pageable pageable);
-  PageDto<UserDto> getFollowedByUser(UUID userId, Pageable pageable);
+  PageDto<UserDto> getFollowingByUser(UUID userId, Pageable pageable);
   FollowDto followUser(UUID userToFollowId, User authenticatedUser);
   void unfollowUser(UUID userToUnfollowId, User authenticatedUser);
 }

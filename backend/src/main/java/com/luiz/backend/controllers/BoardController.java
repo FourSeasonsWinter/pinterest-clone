@@ -51,7 +51,7 @@ public class BoardController {
     @RequestParam(defaultValue = "0") int page,
     @RequestParam(defaultValue = "20") int size
   ) {
-    User user = getUserUtil.getUser(username);
+    User user = getUserUtil.getUserByUsername(username);
     Page<BoardDto> boards = service.getBoardsByUser(user, PageRequest.of(page, size));
     return ResponseEntity.ok(pageMapper.toBoardDto(boards));
   }

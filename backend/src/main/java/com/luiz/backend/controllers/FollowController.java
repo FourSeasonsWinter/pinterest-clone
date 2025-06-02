@@ -44,13 +44,13 @@ public class FollowController {
   }
 
   @Operation(summary = "Get users followed by a user")
-  @GetMapping("/followedBy/{userId}")
+  @GetMapping("/followed-by/{userId}")
   public ResponseEntity<PageDto<UserDto>> getUsersFollowedByUser(
     @PathVariable UUID userId,
     @RequestParam(defaultValue = "0") int page,
     @RequestParam(defaultValue = "20") int size
   ) {
-    return ResponseEntity.ok(service.getFollowedByUser(userId, PageRequest.of(page, size)));
+    return ResponseEntity.ok(service.getFollowingByUser(userId, PageRequest.of(page, size)));
   }
 
   @Operation(summary = "Follow a user")

@@ -14,10 +14,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @Entity
 @Table(name = "users")
+@EqualsAndHashCode(exclude = {"pins", "boards", "following", "followers"})
+@ToString(exclude = {"pins", "boards", "following", "followers"})
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -35,4 +39,9 @@ public class User {
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Board> boards = new HashSet<>();
 
+  @OneToMany(mappedBy = "follower", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<Follow> following = new HashSet<>();
+
+  @OneToMany(mappedBy = "followedBy", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<Follow> followers = new HashSet<>();
 }

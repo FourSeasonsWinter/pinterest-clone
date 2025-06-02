@@ -51,7 +51,7 @@ public class PinController {
     @RequestParam(defaultValue = "0") int page,
     @RequestParam(defaultValue = "20") int size
   ) {
-    User user = getUserUtil.getUser(username);
+    User user = getUserUtil.getUserByUsername(username);
     Page<PinDto> pinsPage = service.getPinsByUser(user, PageRequest.of(page, size));
     return ResponseEntity.ok(pageMapper.toPinDto(pinsPage));
   }

@@ -52,11 +52,12 @@ public class FollowControllerTest {
     testFollow = new Follow();
     testFollow.setFollower(user1);
     testFollow.setFollowedBy(user3);
+    followRepository.save(testFollow);
   }
 
   @Test
   void shouldGetFollowersOfUser() throws Exception {
-    for (int i = 1; i < 15; i++) {
+    for (int i = 1; i <= 15; i++) {
       User user = new User();
       user.setUsername("Test User " + 1);
       userRepository.save(user);
@@ -74,14 +75,14 @@ public class FollowControllerTest {
       .andExpect(jsonPath("$.content").isArray())
       .andExpect(jsonPath("$.content[0].username").value("Test User 1"))
       .andExpect(jsonPath("$.number").value(0))
-      .andExpect(jsonPath("$.size").value(15))
+      .andExpect(jsonPath("$.size").value(10))
       .andExpect(jsonPath("$.totalPages").value(2))
       .andExpect(jsonPath("$.totalElements").value(15));
   }
 
   @Test
   void shouldGetUsersFollowedByUser() throws Exception {
-    for (int i = 1; i < 15; i++) {
+    for (int i = 1; i <= 15; i++) {
       User user = new User();
       user.setUsername("Test User " + 1);
       userRepository.save(user);
@@ -99,7 +100,7 @@ public class FollowControllerTest {
       .andExpect(jsonPath("$.content").isArray())
       .andExpect(jsonPath("$.content[0].username").value("Test User 1"))
       .andExpect(jsonPath("$.number").value(0))
-      .andExpect(jsonPath("$.size").value(15))
+      .andExpect(jsonPath("$.size").value(10))
       .andExpect(jsonPath("$.totalPages").value(2))
       .andExpect(jsonPath("$.totalElements").value(15));
   }

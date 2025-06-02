@@ -6,7 +6,7 @@ import org.mapstruct.Mapping;
 import com.luiz.backend.dtos.FollowDto;
 import com.luiz.backend.entity.Follow;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface FollowMapper {
 
   @Mapping(source = "follower.id", target = "followerId")
