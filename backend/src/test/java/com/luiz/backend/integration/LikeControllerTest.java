@@ -54,9 +54,12 @@ public class LikeControllerTest {
     user2.setUsername("User 2");
     userRepository.save(user2);
 
+    testLike = new Like();
     testLike.setPin(testPin);
     testLike.setUser(user2);
     likeRepository.save(testLike);
+
+    testPin.addLike();
   }
 
   @Test
@@ -78,11 +81,11 @@ public class LikeControllerTest {
       .andExpect(status().isOk())
       .andExpect(jsonPath("$.content").isArray())
       .andExpect(jsonPath("$.content.length()").value(10))
-      .andExpect(jsonPath("$.content[0].name").value("Test User 1"))
+      .andExpect(jsonPath("$.content[0].username").value("User 2"))
       .andExpect(jsonPath("$.number").value(0))
       .andExpect(jsonPath("$.size").value(10))
       .andExpect(jsonPath("$.totalPages").value(2))
-      .andExpect(jsonPath("$.totalElements").value(15));
+      .andExpect(jsonPath("$.totalElements").value(16));
   }
 
   @Test
@@ -91,6 +94,7 @@ public class LikeControllerTest {
       Pin pin = new Pin();
       pin.setUser(user1);
       pin.setTitle("Test Pin " + i);
+      pinRepository.save(pin);
 
       Like like = new Like();
       like.setPin(pin);
@@ -104,7 +108,7 @@ public class LikeControllerTest {
       .andExpect(status().isOk())
       .andExpect(jsonPath("$.content").isArray())
       .andExpect(jsonPath("$.content.length()").value(10))
-      .andExpect(jsonPath("$.content[0].name").value("Test Pin 1"))
+      .andExpect(jsonPath("$.content[0].title").value("Test Pin 1"))
       .andExpect(jsonPath("$.number").value(0))
       .andExpect(jsonPath("$.size").value(10))
       .andExpect(jsonPath("$.totalPages").value(2))
@@ -125,10 +129,12 @@ public class LikeControllerTest {
   }
   
   @Test
-  @WithMockUser("User 1")
+  @WithMockUser("User 2")
   void shouldUnlikePin() throws Exception {
+    assertTrue(testPin.getLikesCount() == 1);
+
     mockMvc.perform(delete("/likes/" + testPin.getId())
-      .with(user("User 1")))
+      .with(user("User 2")))
       .andExpect(status().isNoContent());
 
     assertTrue(likeRepository.count() == 0);

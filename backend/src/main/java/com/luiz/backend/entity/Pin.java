@@ -40,5 +40,13 @@ public class Pin {
   @OneToMany(mappedBy = "pin", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Like> likes = new HashSet<>();
 
-  private int likesCount;
+  private Integer likesCount = 0;
+
+  public void addLike() {
+    this.likesCount++;
+  }
+
+  public void removeLike() {
+    this.likesCount--;
+  }
 }

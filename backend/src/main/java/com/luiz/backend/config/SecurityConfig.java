@@ -39,6 +39,7 @@ public class SecurityConfig {
         .requestMatchers(HttpMethod.GET, "/boards/**").permitAll()
         .requestMatchers(HttpMethod.GET, "/pin-board/**").permitAll()
         .requestMatchers(HttpMethod.GET, "/follows/**").permitAll()
+        .requestMatchers(HttpMethod.GET, "/likes/**").permitAll()
         .requestMatchers(
           "/auth/**",
           "/register/**",
