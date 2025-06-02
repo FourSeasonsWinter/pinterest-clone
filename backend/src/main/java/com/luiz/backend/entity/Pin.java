@@ -36,4 +36,9 @@ public class Pin {
 
   @OneToMany(mappedBy = "pin", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<PinBoard> pinBoards = new HashSet<>();
+
+  @OneToMany(mappedBy = "pin", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<Like> likes = new HashSet<>();
+
+  private int likesCount;
 }
