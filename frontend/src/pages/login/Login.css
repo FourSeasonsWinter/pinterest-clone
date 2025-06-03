@@ -1,0 +1,66 @@
+.login-page {
+  height: 100vh;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.background {
+  content: '';
+  position: absolute;
+  background-image: url('/src/assets/background.jfif');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.background::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+.login-page h1 {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.email {
+  height: 40px;
+  max-width: 400px;
+  outline: none;
+  border: none;
+  border-radius: 20px;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 600;
+  background-color: #f50000;
+  color: white;
+  letter-spacing: 0.25px;
+  margin-top: 1rem;
+  margin-bottom: 10px;
+  box-shadow: 2px 2px 4px #0006;
+}
+
+.login-page b {
+  margin: 3rem 0;
+  font-size: 0.9rem;
+}
+
+.login-page p {
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 0 2rem;
+}
+
+.login-page a {
+  color: white;
+}

@@ -1,11 +1,11 @@
 import './App.css'
-import NavBar from './components/navbar/NavBar'
+import Login from './pages/login/Login'
 
 function App() {
 
   return (
     <>
-      <NavBar />
+      <Login />
     </>
   )
 }
