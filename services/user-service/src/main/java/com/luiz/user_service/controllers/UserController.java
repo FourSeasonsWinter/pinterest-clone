@@ -1,4 +1,4 @@
-package com.luiz.backend.controllers;
+package com.luiz.user_service.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.luiz.backend.dtos.UserDto;
-import com.luiz.backend.dtos.UserPasswordUpdateRequest;
-import com.luiz.backend.dtos.UserUpdateRequest;
-import com.luiz.backend.entity.User;
-import com.luiz.backend.exception.UnauthenticatedException;
-import com.luiz.backend.exception.UserNotFoundException;
-import com.luiz.backend.repository.UserRepository;
-import com.luiz.backend.services.UserService;
+import com.luiz.user_service.dtos.UserDto;
+import com.luiz.user_service.dtos.UserPasswordUpdateRequest;
+import com.luiz.user_service.dtos.UserUpdateRequest;
+import com.luiz.user_service.entity.User;
+import com.luiz.user_service.exceptions.UnauthenticatedException;
+import com.luiz.user_service.exceptions.UserNotFoundException;
+import com.luiz.user_service.repository.UserRepository;
+import com.luiz.user_service.services.UserService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
