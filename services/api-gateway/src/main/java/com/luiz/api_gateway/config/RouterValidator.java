@@ -12,7 +12,8 @@ public class RouterValidator {
     public static final List<String> openEndpoints = List.of(
         "/auth/register",
         "/auth/login",
-        "/pins/by-user"
+        "/pins/by-user",
+        "/boards/by-user"
     );
 
     public Predicate<ServerHttpRequest> isSecure =
@@ -20,11 +21,11 @@ public class RouterValidator {
             String path = request.getURI().getPath();
             String method = request.getMethod().name();
 
-            if (path.equals("/users/me")) {
-                return true;
+            if (path.startsWith("/pins") && method.equalsIgnoreCase("GET")) {
+                return false;
             }
 
-            if (path.startsWith("/pins") && method.equalsIgnoreCase("GET")) {
+            if (path.startsWith("/boards") && method.equalsIgnoreCase("GET")) {
                 return false;
             }
 

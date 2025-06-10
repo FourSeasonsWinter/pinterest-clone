@@ -23,6 +23,9 @@ public class GatewayConfig {
             .route("pin-service", r -> r.path("/pins/**")
                 .filters(f -> f.filter(filter))
                 .uri("lb://pin-service"))
+            .route("board-service", r -> r.path("/boards/**")
+                .filters(f -> f.filter(filter))
+                .uri("lb://board-service"))
             .build();
 
     }
