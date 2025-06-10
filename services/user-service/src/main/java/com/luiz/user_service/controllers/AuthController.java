@@ -13,6 +13,7 @@ import com.luiz.user_service.dtos.LoginRequest;
 import com.luiz.user_service.dtos.RegisterRequest;
 import com.luiz.user_service.entity.User;
 import com.luiz.user_service.exceptions.InvalidCredentialsException;
+import com.luiz.user_service.exceptions.UserNotFoundException;
 import com.luiz.user_service.repository.UserRepository;
 import com.luiz.user_service.util.JwtUtil;
 
@@ -32,12 +33,13 @@ public class AuthController {
   @PostMapping("/login")
   public String login(@RequestBody LoginRequest request) {
     String username = request.getUsername();
+    User user = repository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found with username " + username));
 
     try {
       authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(username, request.getPassword())
       );
-      return jwtUtil.generateToken(username);
+      return jwtUtil.generateToken(user.getId());
     } catch (Exception e) {
       throw new InvalidCredentialsException("Invalid credentials");
     }
@@ -58,7 +60,7 @@ public class AuthController {
     user.setUsername(username);
     user.setPassword(hashedPassword);
 
-    repository.save(user);
-    return ResponseEntity.ok(jwtUtil.generateToken(username));
+    User savedUser = repository.save(user);
+    return ResponseEntity.ok(jwtUtil.generateToken(savedUser.getId()));
   }
 }

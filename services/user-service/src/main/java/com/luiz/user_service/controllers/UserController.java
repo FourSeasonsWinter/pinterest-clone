@@ -45,7 +45,7 @@ public class UserController {
     return ResponseEntity.ok(user);
   }
 
-  @PutMapping("/update-details")
+  @PutMapping
   @SecurityRequirement(name = "bearerAuth")
   public ResponseEntity<UserDto> updateUser(
       @RequestBody UserUpdateRequest request,

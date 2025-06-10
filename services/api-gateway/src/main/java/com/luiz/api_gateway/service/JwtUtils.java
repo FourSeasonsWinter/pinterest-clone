@@ -21,7 +21,17 @@ public class JwtUtils {
     }
     
     public Claims getClaims(String token) {
-        return Jwts.parser().verifyWith(key).build().parseEncryptedClaims(token).getPayload();
+        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
+    }
+
+    public String extractClaim(String token, String claim) {
+        Claims claims = Jwts.parser()
+            .verifyWith(key)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
+        
+        return claims.get(claim, String.class);
     }
 
     public boolean isExpired(String token) {

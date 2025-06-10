@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.UUID;
 
 import javax.crypto.SecretKey;
 
@@ -26,9 +27,9 @@ public class JwtUtil {
     this.key = Keys.hmacShaKeyFor(secret.getBytes());
   }
 
-  public String generateToken(String username) {
+  public String generateToken(UUID userId) {
     return Jwts.builder()
-        .subject(username)
+        .subject(userId.toString())
         .issuedAt(new Date())
         .expiration(new Date(System.currentTimeMillis() + expiration))
         .signWith(key)

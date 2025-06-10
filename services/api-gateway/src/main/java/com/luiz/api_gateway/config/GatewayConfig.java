@@ -17,7 +17,7 @@ public class GatewayConfig {
     @Bean
     RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
-            .route("user-service", r -> r.path("/users/**")
+            .route("user-service", r -> r.path("/users/**", "/auth/**")
                 .filters(f -> f.filter(filter))
                 .uri("lb://user-service"))
             .route("pin-service", r -> r.path("/pins/**")

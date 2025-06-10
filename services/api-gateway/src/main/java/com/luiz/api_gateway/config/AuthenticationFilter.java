@@ -33,11 +33,19 @@ public class AuthenticationFilter implements GatewayFilter {
             final String token = request
                 .getHeaders()
                 .getOrEmpty("Authorization")
-                .get(0);
+                .get(0)
+                .replace("Bearer ", "");
             
             if (jwtUtils.isExpired(token)) {
                 return onError(exchange, HttpStatus.UNAUTHORIZED);
             }
+
+            String userId = jwtUtils.extractClaim(token, "sub");
+            ServerHttpRequest modifiedRequest = request.mutate()
+                .header("X-User-Id", userId)
+                .build();
+            
+            return chain.filter(exchange.mutate().request(modifiedRequest).build());
         }
 
         return chain.filter(exchange);
