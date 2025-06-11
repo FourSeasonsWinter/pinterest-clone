@@ -59,7 +59,7 @@ public class PinController {
   }
 
   @PostMapping("/batch")
-  public List<PinDto> getPinsByIds(@RequestParam List<UUID> pinsIds) {
+  public List<PinDto> getPinsByIds(@RequestBody List<UUID> pinsIds) {
     List<Pin> pins = repository.findAllById(pinsIds);
     return pins.stream().map(pinMapper::toDto).toList();
   }

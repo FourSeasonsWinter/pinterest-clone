@@ -28,6 +28,9 @@ public class GatewayConfig {
             .route("follow-service", r -> r.path("/follows/**")
                 .filters(f -> f.filter(filter))
                 .uri("lb://follow-service"))
+            .route("like-service", r -> r.path("/likes/**")
+                .filters(f -> f.filter(filter))
+                .uri("lb://like-service"))
             .build();
 
     }

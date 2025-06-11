@@ -78,7 +78,7 @@ public class LikeServiceImpl implements LikeService {
     }
     
     @Override
-    public PageDto<PinDto> getPinsLikedByTheUser(UUID userId, Pageable pageable) {
+    public PageDto<PinDto> getPinsLikedByUser(UUID userId, Pageable pageable) {
         Page<Like> likes = likeRepository.findByUserId(userId, pageable);
         List<UUID> pinIds = likes.stream().map(Like::getPinId).toList();
         List<PinDto> pins = pinClient.getPinsByIds(pinIds);

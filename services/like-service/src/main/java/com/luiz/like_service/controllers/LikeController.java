@@ -47,7 +47,7 @@ public class LikeController {
     @RequestParam(defaultValue = "0") int page,
     @RequestParam(defaultValue = "20") int size
   ) {
-    return ResponseEntity.ok(service.getPinsLikedByTheUser(userId, PageRequest.of(page, size)));
+    return ResponseEntity.ok(service.getPinsLikedByUser(userId, PageRequest.of(page, size)));
   }
 
   @Operation(summary = "Give like to a pin")

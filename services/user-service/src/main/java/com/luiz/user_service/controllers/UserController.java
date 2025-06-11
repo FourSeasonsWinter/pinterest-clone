@@ -39,7 +39,7 @@ public class UserController {
   private final PasswordEncoder encoder;
 
   @GetMapping
-  public ResponseEntity<UserDto> getUser(@RequestParam String username) {
+  public ResponseEntity<UserDto> getUserByUsername(@RequestParam String username) {
     UserDto user = service.getUser(username);
     return ResponseEntity.ok(user);
   }
@@ -49,7 +49,6 @@ public class UserController {
     List<User> users = repository.findAllById(userIds);
     return users.stream().map(mapper::toDto).collect(Collectors.toList());
   }
-  
 
   @PutMapping
   @SecurityRequirement(name = "bearerAuth")
