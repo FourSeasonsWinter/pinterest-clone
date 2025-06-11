@@ -1,5 +1,9 @@
 package com.luiz.user_service.controllers;
 
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,11 +21,13 @@ import com.luiz.user_service.dtos.UserUpdateRequest;
 import com.luiz.user_service.entity.User;
 import com.luiz.user_service.exceptions.UnauthenticatedException;
 import com.luiz.user_service.exceptions.UserNotFoundException;
+import com.luiz.user_service.mapper.UserMapper;
 import com.luiz.user_service.repository.UserRepository;
 import com.luiz.user_service.services.UserService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -30,6 +36,7 @@ public class UserController {
 
   private final UserService service;
   private final UserRepository repository;
+  private final UserMapper mapper;
   private final PasswordEncoder encoder;
 
   @GetMapping("/me")
@@ -44,6 +51,13 @@ public class UserController {
     UserDto user = service.getUser(username);
     return ResponseEntity.ok(user);
   }
+
+  @GetMapping("/batch")
+  public List<UserDto> getUsersByIds(@RequestBody List<UUID> userIds) {
+    List<User> users = repository.findAllById(userIds);
+    return users.stream().map(mapper::toDto).collect(Collectors.toList());
+  }
+  
 
   @PutMapping
   @SecurityRequirement(name = "bearerAuth")
