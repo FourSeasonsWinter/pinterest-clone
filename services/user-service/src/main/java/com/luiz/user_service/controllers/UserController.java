@@ -8,11 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.luiz.user_service.dtos.UserDto;
@@ -28,7 +28,6 @@ import com.luiz.user_service.services.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
@@ -39,20 +38,13 @@ public class UserController {
   private final UserMapper mapper;
   private final PasswordEncoder encoder;
 
-  @GetMapping("/me")
-  @SecurityRequirement(name = "bearerAuth")
-  public ResponseEntity<UserDto> getCurrentUser(Authentication authentication) {
-    User user = getAuthenticatedUser(authentication);
-    return ResponseEntity.ok(service.getCurrentUser(user));
-  }
-
-  @GetMapping("/{username}")
-  public ResponseEntity<UserDto> getUser(@PathVariable String username) {
+  @GetMapping
+  public ResponseEntity<UserDto> getUser(@RequestParam String username) {
     UserDto user = service.getUser(username);
     return ResponseEntity.ok(user);
   }
 
-  @GetMapping("/batch")
+  @PostMapping("/batch")
   public List<UserDto> getUsersByIds(@RequestBody List<UUID> userIds) {
     List<User> users = repository.findAllById(userIds);
     return users.stream().map(mapper::toDto).collect(Collectors.toList());

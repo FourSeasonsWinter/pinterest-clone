@@ -18,7 +18,6 @@ public class GatewayConfig {
     RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
             .route("user-service", r -> r.path("/users/**", "/auth/**")
-                .filters(f -> f.filter(filter))
                 .uri("lb://user-service"))
             .route("pin-service", r -> r.path("/pins/**")
                 .filters(f -> f.filter(filter))
@@ -26,6 +25,9 @@ public class GatewayConfig {
             .route("board-service", r -> r.path("/boards/**")
                 .filters(f -> f.filter(filter))
                 .uri("lb://board-service"))
+            .route("follow-service", r -> r.path("/follows/**")
+                .filters(f -> f.filter(filter))
+                .uri("lb://follow-service"))
             .build();
 
     }

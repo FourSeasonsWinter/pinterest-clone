@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.luiz.follow_service.dtos.UserDto;
 
@@ -17,6 +18,6 @@ public interface UserServiceClient {
     @GetMapping("/users/{username}")
     UserDto getUserByUsername(@PathVariable String username);
 
-    @GetMapping("/users/batch")
+    @PostMapping("/users/batch")
     List<UserDto> getUsersByIds(@RequestBody List<UUID> usersIds);
 }

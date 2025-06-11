@@ -12,14 +12,22 @@ public class RouterValidator {
     public static final List<String> openEndpoints = List.of(
         "/auth/register",
         "/auth/login",
+        "/users/batch",
         "/pins/by-user",
-        "/boards/by-user"
+        "/boards/by-user",
+        "/follows/followers",
+        "/follows/followed-by",
+        "/follows/count"
     );
 
     public Predicate<ServerHttpRequest> isSecure =
         request -> {
             String path = request.getURI().getPath();
             String method = request.getMethod().name();
+
+            if (path.startsWith("/users") && method.equalsIgnoreCase("GET")) {
+                return false;
+            }
 
             if (path.startsWith("/pins") && method.equalsIgnoreCase("GET")) {
                 return false;

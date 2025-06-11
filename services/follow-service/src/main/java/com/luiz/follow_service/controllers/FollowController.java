@@ -66,12 +66,16 @@ public class FollowController {
 
   @Operation(summary = "Follow a user")
   @SecurityRequirement(name = "bearerAuth")
-  @PostMapping("/{followedById}")
+  @PostMapping("/{userToFollowId}")
   public ResponseEntity<FollowDto> followUser(
-    @PathVariable UUID followedById,
+    @PathVariable UUID userToFollowId,
     @RequestHeader("X-User-Id") String authenticatedUserId
   ) {
-    FollowDto follow = service.followUser(followedById, UUID.fromString(authenticatedUserId));
+    if (userToFollowId.equals(UUID.fromString(authenticatedUserId))) {
+      return ResponseEntity.badRequest().build();
+    }
+
+    FollowDto follow = service.followUser(userToFollowId, UUID.fromString(authenticatedUserId));
     return new ResponseEntity<>(follow, HttpStatus.CREATED);
   }
 
