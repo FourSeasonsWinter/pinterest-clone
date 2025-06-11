@@ -1,6 +1,7 @@
 package com.luiz.pin_service.controllers;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -22,7 +23,10 @@ import com.luiz.pin_service.dtos.PageDto;
 import com.luiz.pin_service.dtos.PinDto;
 import com.luiz.pin_service.dtos.PinPostRequest;
 import com.luiz.pin_service.dtos.PinUpdateRequest;
+import com.luiz.pin_service.entity.Pin;
 import com.luiz.pin_service.mappers.PageMapper;
+import com.luiz.pin_service.mappers.PinMapper;
+import com.luiz.pin_service.repository.PinRepository;
 import com.luiz.pin_service.services.PinService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -34,6 +38,8 @@ import lombok.RequiredArgsConstructor;
 public class PinController {
   
   private final PinService service;
+  private final PinRepository repository;
+  private final PinMapper pinMapper;
   private final PageMapper pageMapper;
 
   @GetMapping("/{id}")
@@ -51,6 +57,13 @@ public class PinController {
     Page<PinDto> pinsPage = service.getPinsByUser(username, PageRequest.of(page, size));
     return ResponseEntity.ok(pageMapper.toDto(pinsPage));
   }
+
+  @PostMapping("/batch")
+  public List<PinDto> getPinsByIds(@RequestParam List<UUID> pinsIds) {
+    List<Pin> pins = repository.findAllById(pinsIds);
+    return pins.stream().map(pinMapper::toDto).toList();
+  }
+  
 
   @PostMapping
   @SecurityRequirement(name = "bearerAuth")

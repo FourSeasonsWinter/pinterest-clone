@@ -14,6 +14,7 @@ public class RouterValidator {
         "/auth/login",
         "/users/batch",
         "/pins/by-user",
+        "/pins/batch",
         "/boards/by-user",
         "/follows/followers",
         "/follows/followed-by",

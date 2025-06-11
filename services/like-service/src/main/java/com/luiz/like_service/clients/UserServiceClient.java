@@ -1,4 +1,4 @@
-package com.luiz.follow_service.clients;
+package com.luiz.like_service.clients;
 
 import java.util.List;
 import java.util.UUID;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.luiz.follow_service.dtos.UserDto;
+import com.luiz.like_service.dtos.UserDto;
 
 @FeignClient(name = "user-service")
 public interface UserServiceClient {
