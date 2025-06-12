@@ -1,6 +1,7 @@
 package com.luiz.board_service.controllers;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -22,7 +23,10 @@ import com.luiz.board_service.dtos.BoardDto;
 import com.luiz.board_service.dtos.BoardPostRequest;
 import com.luiz.board_service.dtos.BoardUpdateRequest;
 import com.luiz.board_service.dtos.PageDto;
+import com.luiz.board_service.entity.Board;
+import com.luiz.board_service.mappers.BoardMapper;
 import com.luiz.board_service.mappers.PageMapper;
+import com.luiz.board_service.repository.BoardRepository;
 import com.luiz.board_service.services.BoardService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -34,10 +38,12 @@ import lombok.RequiredArgsConstructor;
 public class BoardController {
 
   private final BoardService service;
+  private final BoardRepository repository;
+  private final BoardMapper boardMapper;
   private final PageMapper pageMapper;
 
   @GetMapping("/{id}")
-  public ResponseEntity<BoardDto> getBoard(@PathVariable UUID id) {
+  public ResponseEntity<BoardDto> getBoardById(@PathVariable UUID id) {
     BoardDto dto = service.getBoard(id);
     return ResponseEntity.ok(dto);
   }
@@ -52,8 +58,15 @@ public class BoardController {
     return ResponseEntity.ok(pageMapper.toDto(boards));
   }
 
-  @PostMapping
+  @PostMapping("/batch")
+  public List<BoardDto> getBoardsByIds(@RequestBody List<UUID> boardIds) {
+    List<Board> boards = repository.findAllById(boardIds);
+    return boards.stream().map(boardMapper::toDto).toList();
+  }
+  
+
   @SecurityRequirement(name = "bearerAuth")
+  @PostMapping
   public ResponseEntity<BoardDto> createBoard(
     @RequestBody BoardPostRequest request,
     @RequestHeader("X-User-Id") String userId,
@@ -65,8 +78,8 @@ public class BoardController {
     return ResponseEntity.created(uri).body(dto);
   }
 
-  @PutMapping("/{id}")
   @SecurityRequirement(name = "bearerAuth")
+  @PutMapping("/{id}")
   public ResponseEntity<BoardDto> updateBoard(
     @PathVariable UUID id,
     @RequestBody BoardUpdateRequest request,
@@ -77,8 +90,8 @@ public class BoardController {
     return ResponseEntity.ok(dto);
   }
 
-  @DeleteMapping("/{id}")
   @SecurityRequirement(name = "bearerAuth")
+  @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteBoard(
     @PathVariable UUID id,
     @RequestHeader("X-User-Id") String userId
