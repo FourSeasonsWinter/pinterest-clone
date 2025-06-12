@@ -20,7 +20,9 @@ public class RouterValidator {
         "/follows/followed-by",
         "/follows/count",
         "/likes/user",
-        "/likes/pin"
+        "/likes/pin",
+        "/pin-board/pins",
+        "/pin-board/boards"
     );
 
     public Predicate<ServerHttpRequest> isSecure =
