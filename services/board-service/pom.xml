@@ -31,11 +31,6 @@
 		<spring-cloud.version>2025.0.0</spring-cloud.version>
 	</properties>
 	<dependencies>
-		<dependency>
-			<groupId>io.github.resilience4j</groupId>
-			<artifactId>resilience4j-spring-boot2</artifactId>
-			<version>2.3.0</version>
-		</dependency>
 		
 		<dependency>
 			<groupId>org.mapstruct</groupId>

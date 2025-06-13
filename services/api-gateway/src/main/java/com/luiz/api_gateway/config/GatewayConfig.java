@@ -16,32 +16,31 @@ public class GatewayConfig {
     RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
             .route("user-service", r -> r.path("/users/**", "/auth/**")
-                .filters(f -> f.circuitBreaker(c -> c.setName("user-service")))
                 .uri("lb://user-service"))
             .route("pin-service", r -> r.path("/pins/**")
                 .filters(f -> f
                     .filter(filter)
-                    .circuitBreaker(c -> c.setName("pin-service")))
+                    )
                 .uri("lb://pin-service"))
             .route("board-service", r -> r.path("/boards/**")
                 .filters(f -> f
                     .filter(filter)
-                    .circuitBreaker(c -> c.setName("board-service")))
+                    )
                 .uri("lb://board-service"))
             .route("follow-service", r -> r.path("/follows/**")
                 .filters(f -> f
                     .filter(filter)
-                    .circuitBreaker(c -> c.setName("follow-service")))
+                    )
                 .uri("lb://follow-service"))
             .route("like-service", r -> r.path("/likes/**")
                 .filters(f -> f
                     .filter(filter)
-                    .circuitBreaker(c -> c.setName("like-service")))
+                    )
                 .uri("lb://like-service"))
             .route("pin-board-service", r -> r.path("/pin-board/**")
                 .filters(f -> f
                     .filter(filter)
-                    .circuitBreaker(c -> c.setName("pin-board-service")))
+                    )
                 .uri("lb://pin-board-service"))
             .build();
 
