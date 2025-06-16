@@ -1,4 +1,4 @@
-export default interface Pin {
+export default interface PinModel {
   id: string
   imageUrl: string
   description: string

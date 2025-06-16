@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { fetchPins } from '../../services/pins'
 import './Home.css'
-import type Pin from '../../models/pin'
+import type PinModel from '../../models/pin'
+import PinsContainer from '../../components/pins-container/PinsContainer'
 
 export default function Home() {
-  const [pins, setPins] = useState<Pin[]>([])
+  const [pins, setPins] = useState<PinModel[]>([])
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
@@ -31,13 +32,6 @@ export default function Home() {
   }
 
   return (
-    <div className='pins-container'>
-      {pins.map((pin) => (
-        <div key={pin.id} className='pin'>
-          <img src={pin.imageUrl} alt={pin.description} />
-          <p>{pin.description}</p>
-        </div>
-      ))}
-    </div>
+    <PinsContainer pins={pins} />
   )
 }

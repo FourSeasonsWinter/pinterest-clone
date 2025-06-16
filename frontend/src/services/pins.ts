@@ -1,12 +1,16 @@
 import axios from 'axios';
-import type Pin from '../models/pin';
+import type PinModel from '../models/pin';
 
-export async function fetchPins(): Promise<Pin[]> {
+function generateRandomHeight(): number {
+  return Math.floor(Math.random() * (400 - 200 + 1)) + 200; // Random height between 200 and 400
+}
+
+export async function fetchPins(): Promise<PinModel[]> {
   try {
     const response = await axios.get(`${import.meta.env.VITE_API_URL}`);
-    const formatedPins: Pin[] = response.data.map((pin: any) => ({
+    const formatedPins: PinModel[] = response.data.map((pin: any) => ({
       id: crypto.randomUUID(),
-      imageUrl: pin.download_url,
+      imageUrl: `https://picsum.photos/id/${pin.id}/300/${generateRandomHeight()}`,
       description: '',
       userId: '',
     }));

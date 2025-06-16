@@ -1,0 +1,11 @@
+.pins-container {
+  display: flex;
+  margin-top: 4px;
+  margin-left: -4px;
+  width: 100%;
+  justify-content: center;
+}
+
+.pins-container-column {
+  padding-left: 8px;
+}
