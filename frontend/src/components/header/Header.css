@@ -1,0 +1,34 @@
+.header {
+  width: 100%;
+  height: 3rem;
+  padding: 0 .6rem;
+  position: fixed;
+  background-color: white;
+}
+
+.header ul {
+  display: flex;
+  gap: 1.4rem;
+  padding-top: .9rem;
+  align-items: start;
+  height: 100%;
+  list-style: none;
+}
+
+.header ul li span {
+  font-weight: 500;
+  font-size: .9rem;
+}
+
+.active {
+  position: relative;
+}
+
+.active::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: black;
+  bottom: -2px;
+}
