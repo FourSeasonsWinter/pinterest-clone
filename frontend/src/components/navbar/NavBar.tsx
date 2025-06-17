@@ -8,19 +8,25 @@ import {
   RiChat3Fill,
   RiAccountCircleLine,
   RiAccountCircleFill,
+  RiAddFill,
+  RiAddLargeLine,
 } from 'react-icons/ri'
 
 export default function NavBar() {
   return (
-    <IconContext.Provider value={{ size: "26", color: "#0008" }}>
+    <IconContext.Provider value={{ size: "22", color: "black" }}>
       <div className='nav-bar'>
         <div>
-          <RiHomeLine />
+          <RiHomeSmile2Fill />
           <span>Home</span>
         </div>
         <div>
           <RiSearchLine />
           <span>Search</span>
+        </div>
+        <div>
+          <RiAddLargeLine />
+          <span>Create</span>
         </div>
         <div>
           <RiChat3Line />
