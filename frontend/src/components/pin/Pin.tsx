@@ -1,16 +1,14 @@
+import type PinModel from '../../models/pin';
 import './Pin.css'
 
 interface Props {
-  id: string;
-  imageUrl: string;
-  description: string;
-  userId: string;
+  pin: PinModel;
 }
 
-export default function Pin(props: Props) {
+export default function Pin({ pin }: Props) {
   return (
     <div className="pin">
-      <img src={props.imageUrl} alt={props.description} />
+      <img src={pin.imageUrl} alt={pin.description} loading='lazy' />
     </div>
   );
 

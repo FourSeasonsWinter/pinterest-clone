@@ -2,12 +2,17 @@ import Masonry from 'react-masonry-css'
 import type PinModel from '../../models/pin'
 import Pin from '../pin/Pin'
 import './PinsContainer.css'
+import { useEffect, useState } from 'react'
+import { fetchPins } from '../../services/pinService'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
-interface Props {
-  pins: PinModel[]
-}
+export default function PinsContainer() {
+  const [pins, setPins] = useState<PinModel[]>([])
+  const [page, setPage] = useState<number>(1)
+  const [hasMore, setHasMore] = useState<boolean>(true)
 
-export default function PinsContainer({ pins }: Props) {
+  const LIMIT = 15
+
   const breakpointColumnsObject = {
     default: 8,
     1000: 6,
@@ -15,21 +20,44 @@ export default function PinsContainer({ pins }: Props) {
     700: 2,
   }
 
+  useEffect(() => {
+    async function loadInitialPins() {
+      const data = await fetchPins(page, LIMIT)
+      setPins(data)
+    }
+
+    loadInitialPins()
+  }, [])
+
+  async function loadMorePins() {
+    const nextPage = page + 1
+    const newPins = await fetchPins(nextPage, LIMIT)
+
+    setPins(() => [...pins, ...newPins])
+    setPage(nextPage)
+
+    if (newPins.length < LIMIT) {
+      setHasMore(false)
+    }
+  }
+
   return (
-    <Masonry
-      breakpointCols={breakpointColumnsObject}
-      className='pins-container'
-      columnClassName='pins-container-column'
+    <InfiniteScroll
+      dataLength={pins.length}
+      next={loadMorePins}
+      hasMore={hasMore}
+      loader={<h4>Loading...</h4>}
+      endMessage={<p style={{ textAlign: 'center' }}>You have seem it all!</p>}
     >
-      {pins.map((pin) => (
-        <Pin
-          key={pin.id}
-          id={pin.id}
-          imageUrl={pin.imageUrl}
-          description={pin.description}
-          userId={pin.userId}
-        />
-      ))}
-    </Masonry>
+      <Masonry
+        breakpointCols={breakpointColumnsObject}
+        className='pins-container'
+        columnClassName='pins-container-column'
+      >
+        {pins.map((pin) => (
+          <Pin key={pin.id} pin={pin} />
+        ))}
+      </Masonry>
+    </InfiniteScroll>
   )
 }
