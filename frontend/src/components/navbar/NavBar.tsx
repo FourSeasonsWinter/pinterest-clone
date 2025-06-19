@@ -2,13 +2,13 @@ import { IconContext } from 'react-icons'
 import './NavBar.css'
 import {
   RiHomeSmile2Fill,
-  RiHomeLine,
+  //RiHomeLine,
   RiSearchLine,
   RiChat3Line,
-  RiChat3Fill,
+  //RiChat3Fill,
   RiAccountCircleLine,
-  RiAccountCircleFill,
-  RiAddFill,
+  //RiAccountCircleFill,
+  //RiAddFill,
   RiAddLargeLine,
 } from 'react-icons/ri'
 
